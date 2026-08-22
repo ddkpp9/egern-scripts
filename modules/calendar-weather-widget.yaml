@@ -1,0 +1,40 @@
+name: "天气日历"
+description: "日期、农历、天气、空气质量、日出日落、节日节气倒计时；默认每小时更新天气并自动跟随系统深浅色"
+author: "ddkpp9"
+homepage: "https://github.com/ddkpp9/egern-scripts"
+
+env_schema:
+  CITY:
+    name: 城市
+    description: "用于自动查询经纬度；填写城市名，例如武汉"
+    default_value: "武汉"
+  LOCATION_LABEL:
+    name: 显示地点
+    description: "可选，仅影响显示，例如：湖北 · 武汉 · 高新六路"
+    default_value: "湖北 · 武汉"
+  LATITUDE:
+    name: 纬度
+    description: "可选；填写后需同时填写经度，可提高天气位置精度并跳过城市查询"
+  LONGITUDE:
+    name: 经度
+    description: "可选；填写后需同时填写纬度"
+  REFRESH_MINUTES:
+    name: 天气刷新间隔
+    description: "天气和空气质量的缓存时间；日期、农历和倒计时在本地计算"
+    default_value: "60"
+    options:
+      - "30"
+      - "60"
+      - "120"
+      - "180"
+      - "360"
+
+scriptings:
+- generic:
+    name: 天气日历
+    script_url: https://raw.githubusercontent.com/ddkpp9/egern-scripts/main/modules/calendar-weather-widget.js
+    timeout: 15
+
+widgets:
+- name: 天气日历
+  script_name: 天气日历
