@@ -10,7 +10,7 @@
 | 网络出口状态 | 显示直连/代理公网 IPv4、IPv6、地理位置和 Wi-Fi/蜂窝内网 IPv4 | [network-ip-widget.yaml](https://raw.githubusercontent.com/ddkpp9/egern-scripts/main/modules/network-ip-widget.yaml) |
 | 湖北联通 | 显示剩余话费、流量和语音，接口失败时使用缓存 | [hubei-unicom.yaml](https://raw.githubusercontent.com/ddkpp9/egern-scripts/main/modules/hubei-unicom.yaml) |
 | 今日黄历 | 真实宜忌、冲煞、农历、节气和彭祖百忌，每天北京时间 0 点更新 | [almanac-widget.yaml](https://raw.githubusercontent.com/ddkpp9/egern-scripts/main/modules/almanac-widget.yaml) |
-| 天气日历 | 日期、农历、天气、AQI、日出日落和节日节气倒计时，默认每小时更新 | [calendar-weather-widget.yaml](https://raw.githubusercontent.com/ddkpp9/egern-scripts/main/modules/calendar-weather-widget.yaml) |
+| 天气日历 | 玻璃透明风格，显示日期、农历、天气、AQI、日出日落和节日节气倒计时 | [calendar-weather-widget.yaml](https://raw.githubusercontent.com/ddkpp9/egern-scripts/main/modules/calendar-weather-widget.yaml) |
 
 点击 Raw 链接后在 Egern 中导入模块。
 
