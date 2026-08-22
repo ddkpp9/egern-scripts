@@ -47,11 +47,14 @@ assert.equal(calls.length, 3, 'geocoding, forecast and air quality should be req
 ctx.widgetFamily = 'systemMedium';
 const widget = await module.default(ctx);
 const text = allText(widget).join('\n');
+assert.deepEqual(widget.backgroundColor, { light: '#00000000', dark: '#00000000' });
+assert.equal(widget.children[0].borderRadius, 'auto');
+assert.deepEqual(widget.children[0].backgroundColor, { light: '#ffffff38', dark: '#0d111766' });
 assert.match(text, /湖北 · 武汉 · 高新六路/);
 assert.match(text, /32°C/);
-assert.match(text, /湿度 73%/);
-assert.match(text, /空气 优/);
-assert.match(text, /明天/);
+assert.match(text, /湿度\n73%/);
+assert.match(text, /空气\n优/);
+assert.match(text, /23日/);
 assert.ok(calls.every(call => call.options.policy === 'DIRECT'));
 
 ctx.http.get = async () => { throw new Error('cache should prevent requests'); };
