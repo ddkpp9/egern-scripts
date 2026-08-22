@@ -44,6 +44,12 @@ assert.match(rendered, /2\.00 GB/);
 assert.match(rendered, /120 分钟/);
 assert.doesNotMatch(rendered, /9\.76 GB/);
 
+ctx.env.REFRESH_MINUTES = '1440';
+const dailyWidget = await module.default(ctx);
+const dailyDelay = new Date(dailyWidget.refreshAfter).getTime() - Date.now();
+assert.ok(dailyDelay > 23.9 * 60 * 60 * 1000 && dailyDelay <= 24 * 60 * 60 * 1000,
+  '1440 should schedule an approximately 24-hour refresh');
+
 ctx.http.post = async () => { throw new Error('offline'); };
 const cached = await module.default(ctx);
 assert.match(texts(cached).join('\n'), /缓存/);
