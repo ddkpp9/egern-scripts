@@ -186,20 +186,21 @@ export default async function (ctx) {
   // ─── Theme ──────────────────────────────────
 
   const C = {
-    bg1: '#0d1117', bg2: '#161b22',
-    barBg: '#30363d',
-    text: '#e6edf3', muted: '#7d8590', dim: '#484f58',
-    cpu: '#3fb950', mem: '#58a6ff', swap: '#a371f7',
-    net: '#f778ba', disk: '#d29922', temp: '#ff7b72',
+    bg: { light: '#f6f8fa', dark: '#0d1117' },
+    card: { light: '#ffffff', dark: '#161b22' },
+    barBg: { light: '#d0d7de', dark: '#30363d' },
+    text: { light: '#1f2328', dark: '#f0f6fc' },
+    muted: { light: '#57606a', dark: '#8b949e' },
+    dim: { light: '#8c959f', dark: '#484f58' },
+    cpu: { light: '#1a7f37', dark: '#3fb950' },
+    mem: { light: '#0969da', dark: '#58a6ff' },
+    swap: { light: '#8250df', dark: '#a371f7' },
+    net: { light: '#0969da', dark: '#58a6ff' },
+    disk: { light: '#9a6700', dark: '#d29922' },
+    temp: { light: '#cf222e', dark: '#ff7b72' },
   };
 
   const pctColor = (pct, lo, hi) => pct >= hi ? C.temp : pct >= lo ? C.disk : C.cpu;
-  const alphaHex = a => Math.round(a * 255).toString(16).padStart(2, '0');
-
-  const bgGradient = {
-    type: 'linear', colors: [C.bg1, C.bg2],
-    startPoint: { x: 0, y: 0 }, endPoint: { x: 0.3, y: 1 },
-  };
 
   // ─── Reusable Components ────────────────────
 
@@ -223,7 +224,8 @@ export default async function (ctx) {
         const r = v / mx;
         return {
           type: 'stack', flex: 1, borderRadius: 1, children: [],
-          backgroundColor: color + alphaHex(0.3 + 0.7 * r),
+          backgroundColor: color,
+          opacity: 0.3 + 0.7 * r,
           height: Math.max(1, Math.round(r * h)),
         };
       }),
@@ -272,7 +274,7 @@ export default async function (ctx) {
 
   if (d.error) {
     return {
-      type: 'widget', padding: 16, gap: 8, backgroundColor: C.bg1,
+      type: 'widget', padding: 16, gap: 8, backgroundColor: C.bg,
       children: [
         { type: 'stack', direction: 'row', alignItems: 'center', gap: 8, children: [
           { type: 'image', src: 'sf-symbol:exclamationmark.triangle.fill', color: C.temp, width: 20, height: 20 },
@@ -322,7 +324,7 @@ export default async function (ctx) {
 
   if (ctx.widgetFamily === 'systemSmall') {
     return {
-      type: 'widget', backgroundGradient: bgGradient, padding: 12, gap: 6,
+      type: 'widget', backgroundColor: C.bg, padding: 12, gap: 6,
       children: [
         { type: 'stack', direction: 'row', alignItems: 'center', gap: 6, children: [
           { type: 'image', src: 'sf-symbol:server.rack', color: C.cpu, width: 13, height: 13 },
@@ -342,7 +344,7 @@ export default async function (ctx) {
 
   if (ctx.widgetFamily === 'systemMedium') {
     return {
-      type: 'widget', backgroundGradient: bgGradient, padding: [10, 14],
+      type: 'widget', backgroundColor: C.bg, padding: [10, 14],
       children: [
         header(14),
         { type: 'spacer' },
@@ -400,7 +402,7 @@ export default async function (ctx) {
   // ─── Large / ExtraLarge Widget ──────────────
 
   return {
-    type: 'widget', backgroundGradient: bgGradient, padding: [12, 14], gap: 6,
+    type: 'widget', backgroundColor: C.bg, padding: [12, 14], gap: 6,
     children: [
       header(16),
       divider,
@@ -477,4 +479,3 @@ export default async function (ctx) {
     ],
   };
 }
-
