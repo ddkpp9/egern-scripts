@@ -6,12 +6,10 @@ homepage: "https://github.com/ddkpp9/egern-scripts"
 env_schema:
   CITY:
     name: 城市
-    description: "用于自动查询经纬度；填写城市名，例如武汉"
-    default_value: "武汉"
+    description: "用于自动查询经纬度；填写城市名，例如武汉。也可以不填城市，改为同时填写经纬度"
   LOCATION_LABEL:
     name: 显示地点
     description: "可选，仅影响显示，例如：湖北 · 武汉 · 高新六路"
-    default_value: "湖北 · 武汉"
   LATITUDE:
     name: 纬度
     description: "可选；填写后需同时填写经度，可提高天气位置精度并跳过城市查询"
