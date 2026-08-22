@@ -24,7 +24,7 @@ export default async function (ctx) {
   const authorization = String(env.AUTHORIZATION || env.authorization || '').trim();
   const packageIds = String(env.PACKAGE_IDS || env.packageIds || '')
     .split(/[,，\s]+/).map(v => v.trim()).filter(Boolean);
-  const refreshMinutes = boundedInt(env.REFRESH_MINUTES || env.refreshMinutes, 15, 5, 60);
+  const refreshMinutes = boundedInt(env.REFRESH_MINUTES || env.refreshMinutes, 15, 5, 1440);
 
   let model;
   if (!authorization) {
