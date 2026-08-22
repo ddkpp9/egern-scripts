@@ -1,5 +1,5 @@
 name: "天气日历"
-description: "日期、农历、天气、空气质量、日出日落、节日节气倒计时；默认每小时更新天气并自动跟随系统深浅色"
+description: "玻璃透明风格的日期天气面板，包含农历、空气质量、日出日落、节日节气倒计时；自动跟随系统深浅色"
 author: "ddkpp9"
 homepage: "https://github.com/ddkpp9/egern-scripts"
 
