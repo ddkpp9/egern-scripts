@@ -1,5 +1,5 @@
 name: "今日黄历"
-description: "真实黄历宜忌、冲煞、农历、节气与彭祖百忌；每天北京时间零点后刷新，接口异常时使用当日缓存或离线农历"
+description: "真实黄历宜忌、冲煞、农历、节气与彭祖百忌；每天北京时间 0 点刷新，当天只请求一次，接口异常时使用离线农历"
 author: "IBL3ND（原始组件）/ ddkpp9（重构）"
 homepage: "https://github.com/ddkpp9/egern-scripts"
 
