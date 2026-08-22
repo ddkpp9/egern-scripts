@@ -10,6 +10,7 @@
 | 网络出口状态 | 显示直连/代理公网 IPv4、IPv6、地理位置和 Wi-Fi/蜂窝内网 IPv4 | [network-ip-widget.yaml](https://raw.githubusercontent.com/ddkpp9/egern-scripts/main/modules/network-ip-widget.yaml) |
 | 湖北联通 | 显示剩余话费、流量和语音，接口失败时使用缓存 | [hubei-unicom.yaml](https://raw.githubusercontent.com/ddkpp9/egern-scripts/main/modules/hubei-unicom.yaml) |
 | 今日黄历 | 真实宜忌、冲煞、农历、节气和彭祖百忌，每天北京时间 0 点更新 | [almanac-widget.yaml](https://raw.githubusercontent.com/ddkpp9/egern-scripts/main/modules/almanac-widget.yaml) |
+| 天气日历 | 日期、农历、天气、AQI、日出日落和节日节气倒计时，默认每小时更新 | [calendar-weather-widget.yaml](https://raw.githubusercontent.com/ddkpp9/egern-scripts/main/modules/calendar-weather-widget.yaml) |
 
 点击 Raw 链接后在 Egern 中导入模块。
 
@@ -34,8 +35,10 @@
 - 网络出口状态仅显示内网 IPv4；代理出口没有 IPv6 时自动隐藏 IPv6 行。
 - 服务器监控的私钥必须包含完整的 `BEGIN/END` 内容；支持真实换行或 `\\n`。
 - 今日黄历使用 TimelessQ 万年历接口；同一天所有尺寸和手动刷新共用一次缓存，只在北京时间日期变化后重新请求，不会生成随机宜忌或幸运指数。
+- 天气日历默认显示武汉，可通过 `LOCATION_LABEL` 自定义为街道级名称；Egern 小组件没有定位接口，因此精确位置需手动填写地点或经纬度。天气和空气质量默认缓存 60 分钟，农历及节日节气倒计时在本地计算。
 
 ## 致谢
 
 - 服务器监控基于 [egerndaddy/quick-start](https://github.com/egerndaddy/quick-start) 修改。
 - 湖北联通接口与数据结构参考 [Honye/scripting-scripts](https://github.com/Honye/scripting-scripts/tree/main/scripts/%E6%B9%96%E5%8C%97%E8%81%94%E9%80%9A)。
+- 天气日历的设计参考 [ryanfwy/scripting Calendar Widget](https://github.com/ryanfwy/scripting/tree/master/scripts/Calendar%20Widget)，天气、地理编码和空气质量数据来自 Open-Meteo。
