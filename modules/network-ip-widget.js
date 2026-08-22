@@ -2,26 +2,18 @@
 // Shows DIRECT and current-policy public IPv4/IPv6 plus active-interface IPv4.
 
 const C = {
-  bg1: '#0d1117',
-  bg2: '#161b22',
-  card: '#161b22',
-  border: '#30363d',
-  text: '#e6edf3',
-  muted: '#8b949e',
-  dim: '#484f58',
-  direct: '#3fb950',
-  proxy: '#58a6ff',
-  ipv6: '#a371f7',
-  local: '#f778ba',
-  warn: '#d29922',
-  error: '#ff7b72',
-};
-
-const BG = {
-  type: 'linear',
-  colors: [C.bg1, C.bg2],
-  startPoint: { x: 0, y: 0 },
-  endPoint: { x: 0.35, y: 1 },
+  bg: { light: '#f6f8fa', dark: '#0d1117' },
+  card: { light: '#ffffff', dark: '#161b22' },
+  border: { light: '#d0d7de', dark: '#30363d' },
+  text: { light: '#1f2328', dark: '#f0f6fc' },
+  muted: { light: '#57606a', dark: '#8b949e' },
+  dim: { light: '#8c959f', dark: '#484f58' },
+  direct: { light: '#1a7f37', dark: '#3fb950' },
+  proxy: { light: '#0969da', dark: '#58a6ff' },
+  ipv6: { light: '#8250df', dark: '#a371f7' },
+  local: { light: '#0969da', dark: '#58a6ff' },
+  warn: { light: '#9a6700', dark: '#d29922' },
+  error: { light: '#cf222e', dark: '#ff7b72' },
 };
 
 const IP_ENDPOINTS = {
@@ -601,7 +593,7 @@ function root(model, props) {
     type: 'widget',
     url: 'egern:/connections',
     refreshAfter: model.refreshAfter,
-    backgroundGradient: BG,
+    backgroundColor: C.bg,
     ...props,
   };
 }
