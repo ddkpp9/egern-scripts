@@ -1,0 +1,33 @@
+name: "湖北联通"
+description: "显示湖北联通剩余话费、流量和语音；AUTHORIZATION 由用户自行抓取，接口失败时回退缓存"
+author: "Honye（原始接口与数据结构）/ ddkpp9（Egern 适配）"
+homepage: "https://github.com/ddkpp9/egern-scripts"
+
+env_schema:
+  AUTHORIZATION:
+    name: Authorization
+    description: "必填：自行抓包获取完整 Authorization 请求头；组件不会自动抓取或上传凭据"
+    default_value: ""
+  PACKAGE_IDS:
+    name: 套餐 ID
+    description: "可选：多个 FEE_POLICY_ID 用逗号分隔；留空统计接口返回的全部流量与语音套餐"
+    default_value: ""
+  REFRESH_MINUTES:
+    name: 刷新间隔（分钟）
+    description: "接口请求的建议刷新间隔"
+    default_value: "15"
+    options:
+      - "5"
+      - "15"
+      - "30"
+      - "60"
+
+scriptings:
+- generic:
+    name: 湖北联通
+    script_url: https://raw.githubusercontent.com/ddkpp9/egern-scripts/main/modules/hubei-unicom-widget.js
+    timeout: 15
+
+widgets:
+- name: 湖北联通
+  script_name: 湖北联通
