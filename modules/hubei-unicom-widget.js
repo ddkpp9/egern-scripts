@@ -6,14 +6,17 @@ const API_BASE = 'https://wap.10010hb.net/zinfo/front/user';
 const CACHE_KEY = 'hubei_unicom_widget_cache_v1';
 
 const C = {
-  bg1: '#120b12', bg2: '#21111c', card: '#2b1725', border: '#472439',
-  text: '#fff4f7', muted: '#c99aaa', dim: '#8c6573', red: '#e60027',
-  flow: '#3bc9ec', voice: '#a2cf39', warn: '#f5a623', error: '#ff6b6b',
-};
-
-const BG = {
-  type: 'linear', colors: [C.bg1, C.bg2],
-  startPoint: { x: 0, y: 0 }, endPoint: { x: 0.4, y: 1 },
+  bg: { light: '#f6f8fa', dark: '#0d1117' },
+  card: { light: '#ffffff', dark: '#161b22' },
+  border: { light: '#d0d7de', dark: '#30363d' },
+  text: { light: '#1f2328', dark: '#f0f6fc' },
+  muted: { light: '#57606a', dark: '#8b949e' },
+  dim: { light: '#8c959f', dark: '#484f58' },
+  accent: { light: '#0969da', dark: '#58a6ff' },
+  flow: { light: '#0969da', dark: '#58a6ff' },
+  voice: { light: '#1a7f37', dark: '#3fb950' },
+  warn: { light: '#9a6700', dark: '#d29922' },
+  error: { light: '#cf222e', dark: '#ff7b72' },
 };
 
 export default async function (ctx) {
@@ -153,7 +156,7 @@ function updatedText(model) {
 }
 
 function widget(children, options = {}) {
-  return { type: 'widget', backgroundGradient: BG, padding: options.padding || 14,
+  return { type: 'widget', backgroundColor: C.bg, padding: options.padding || 14,
     gap: options.gap || 8, refreshAfter: options.refreshAfter, children };
 }
 
@@ -168,7 +171,7 @@ function icon(name, color, size = 14) {
 
 function header(model) {
   return { type: 'stack', direction: 'row', alignItems: 'center', gap: 6, children: [
-    icon('antenna.radiowaves.left.and.right', C.red, 16),
+    icon('antenna.radiowaves.left.and.right', C.accent, 16),
     text('湖北联通', 'headline', C.text, 'bold'),
     { type: 'spacer' },
     text(updatedText(model), 'caption2', C.dim),
