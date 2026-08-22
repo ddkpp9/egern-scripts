@@ -23,7 +23,7 @@ export default async function (ctx) {
   const env = ctx.env || {};
   const refreshMinutes = clamp(numberEnv(env.REFRESH_MINUTES, 60), 30, 360);
   const config = {
-    city: clean(env.CITY) || '武汉',
+    city: clean(env.CITY),
     locationLabel: clean(env.LOCATION_LABEL),
     latitude: finiteOrNull(env.LATITUDE),
     longitude: finiteOrNull(env.LONGITUDE),
@@ -101,8 +101,9 @@ async function loadModel(ctx, config) {
 
 async function resolveLocation(ctx, config) {
   if (config.latitude !== null && config.longitude !== null) {
-    return { latitude: config.latitude, longitude: config.longitude, name: config.city, admin1: '' };
+    return { latitude: config.latitude, longitude: config.longitude, name: config.city || '自定义位置', admin1: '' };
   }
+  if (!config.city) throw new Error('请填写城市，或同时填写纬度和经度');
   const cached = readJSON(ctx, GEO_CACHE_KEY);
   if (cached && cached.city === config.city && cached.location && Date.now() - cached.at < 30 * 86400000) {
     return cached.location;
@@ -166,7 +167,7 @@ function fallbackModel(ctx, config, error) {
       warning: `天气更新失败，显示上次数据：${messageOf(error)}` };
   }
   return {
-    locationLabel: config.locationLabel || config.city,
+    locationLabel: config.locationLabel || config.city || '未设置位置',
     temperature: '--', apparent: '--', humidity: '--', windSpeed: '--', windDirection: '--',
     uv: '--', aqi: null, weather: { text: '天气不可用', symbol: 'exclamationmark.triangle.fill' },
     days: [], summary: `暂时无法获取天气：${messageOf(error)}`, updatedAt: beijingTime(), warning: messageOf(error),
