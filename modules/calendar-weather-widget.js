@@ -370,7 +370,7 @@ function sunBlock(model) {
   ], 2);
 }
 
-function divider() { return { type: 'divider', color: C.border }; }
+function divider() { return { type: 'stack', height: 1, backgroundColor: C.border, children: [] }; }
 
 function renderInline(model) {
   return root(model, [txt(`${model.calendar.month}/${model.calendar.day} ${model.weather.text} ${model.temperature}° · ${model.locationLabel}`)], 0, 0);
