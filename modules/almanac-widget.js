@@ -7,15 +7,16 @@ const CACHE_KEY = 'almanac-widget:cache-v2';
 const WEEK = ['日', '一', '二', '三', '四', '五', '六'];
 
 const C = {
-  bg: { light: '#fffaf5', dark: '#12100f' },
-  card: { light: '#fff1e6', dark: '#211b18' },
-  border: { light: '#ead8ca', dark: '#46372f' },
-  text: { light: '#241a16', dark: '#fff8f2' },
-  muted: { light: '#75645b', dark: '#b8a79e' },
-  dim: { light: '#a08e84', dark: '#806f66' },
-  red: { light: '#c93636', dark: '#ff6b6b' },
-  green: { light: '#28785d', dark: '#63d4ad' },
-  gold: { light: '#a86b16', dark: '#f4bd62' },
+  bg: { light: '#f6f8fa', dark: '#0d1117' },
+  card: { light: '#ffffff', dark: '#161b22' },
+  border: { light: '#d0d7de', dark: '#30363d' },
+  text: { light: '#1f2328', dark: '#f0f6fc' },
+  muted: { light: '#57606a', dark: '#8b949e' },
+  dim: { light: '#8c959f', dark: '#484f58' },
+  accent: { light: '#0969da', dark: '#58a6ff' },
+  success: { light: '#1a7f37', dark: '#3fb950' },
+  danger: { light: '#cf222e', dark: '#ff7b72' },
+  warn: { light: '#9a6700', dark: '#d29922' },
 };
 
 export default async function (ctx) {
@@ -199,10 +200,10 @@ function root(model, children, options = {}) {
 
 function header(model, compact = false) {
   return { type: 'stack', direction: 'row', alignItems: 'center', gap: 7, children: [
-    icon('calendar', C.red, compact ? 15 : 18),
+    icon('calendar', C.accent, compact ? 15 : 18),
     txt('今日黄历', compact ? 'subheadline' : 'headline', C.text, 'bold'),
     { type: 'spacer' },
-    ...(model.festivals.length ? [txt(model.festivals[0], 'caption2', C.gold, 'semibold')] : []),
+    ...(model.festivals.length ? [txt(model.festivals[0], 'caption2', C.accent, 'semibold')] : []),
   ] };
 }
 
@@ -217,7 +218,7 @@ function activityRow(kind, values, compact = false) {
   const good = kind === '宜';
   const visible = values.slice(0, compact ? 5 : 10);
   return { type: 'stack', direction: 'row', alignItems: 'start', gap: 7, children: [
-    { type: 'stack', padding: [2, 5], borderRadius: 5, backgroundColor: good ? C.red : C.green,
+    { type: 'stack', padding: [2, 5], borderRadius: 5, backgroundColor: good ? C.success : C.danger,
       children: [txt(kind, 'caption2', { light: '#ffffff', dark: '#101010' }, 'bold')] },
     txt(visible.length ? visible.join(' · ') : '暂无数据', compact ? 'caption2' : 'caption1', C.text, 'medium',
       { maxLines: compact ? 1 : 2, minScale: 0.6 }),
@@ -230,7 +231,7 @@ function infoLine(model) {
 }
 
 function warning(model) {
-  return model.warning ? txt(model.warning, 'caption2', C.gold, 'medium', { maxLines: 2 }) : null;
+  return model.warning ? txt(model.warning, 'caption2', C.warn, 'medium', { maxLines: 2 }) : null;
 }
 
 function renderInline(model) {
@@ -240,7 +241,7 @@ function renderInline(model) {
 
 function renderCircular(model) {
   return root(model, [
-    { type: 'spacer' }, txt(model.day, 24, C.red, 'bold', { textAlign: 'center' }),
+    { type: 'spacer' }, txt(model.day, 24, C.accent, 'bold', { textAlign: 'center' }),
     txt(model.showLunar ? model.lunarText.split(' · ').pop() : `${model.month}月`, 'caption2', C.muted, 'medium', { textAlign: 'center' }),
     { type: 'spacer' },
   ], { padding: 3, gap: 0 });
@@ -250,7 +251,7 @@ function renderRectangular(model) {
   return root(model, [
     txt(`${model.month}月${model.day}日 ${model.week}`, 'headline', C.text, 'bold'),
     ...(model.showLunar ? [txt(model.lunarText, 'caption2', C.muted)] : []),
-    ...(model.showYiJi ? [txt(`宜 ${model.yi.slice(0, 4).join(' · ') || '暂无数据'}`, 'caption2', C.red)] : []),
+    ...(model.showYiJi ? [txt(`宜 ${model.yi.slice(0, 4).join(' · ') || '暂无数据'}`, 'caption2', C.success)] : []),
   ], { padding: 6, gap: 1 });
 }
 
@@ -287,6 +288,6 @@ function renderLarge(model) {
       txt(`彭祖百忌：${model.pengzu.join('；')}`, 'caption1', C.dim, undefined, { maxLines: 2 }),
     ] : []),
     { type: 'spacer' },
-    txt(model.warning || '数据：TimelessQ · 传统民俗仅供参考', 'caption2', model.warning ? C.gold : C.dim),
+    txt(model.warning || '数据：TimelessQ · 传统民俗仅供参考', 'caption2', model.warning ? C.warn : C.dim),
   ], { padding: 16, gap: 9 });
 }
