@@ -17,7 +17,7 @@
 
 - `AUTHORIZATION`：必填，由你自行抓包获取完整请求头值。
 - `PACKAGE_IDS`：可选，多个 `FEE_POLICY_ID` 用逗号分隔；留空时统计全部套餐。
-- `REFRESH_MINUTES`：可选，默认 15 分钟，可选 5、15、30、60。
+- `REFRESH_MINUTES`：可选，默认 15 分钟，可选 5、15、30、60、1440（24 小时）。
 
 使用的接口：
 
