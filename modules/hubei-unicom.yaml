@@ -21,6 +21,7 @@ env_schema:
       - "15"
       - "30"
       - "60"
+      - "1440"
 
 scriptings:
 - generic:
