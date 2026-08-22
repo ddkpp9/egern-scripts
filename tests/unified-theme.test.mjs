@@ -6,6 +6,7 @@ const files = [
   '../modules/network-ip-widget.js',
   '../modules/server-monitor.js',
   '../modules/hubei-unicom-widget.js',
+  '../modules/calendar-weather-widget.js',
 ];
 
 for (const relative of files) {
