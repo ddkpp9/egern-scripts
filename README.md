@@ -9,6 +9,7 @@
 | 服务器监控 | 通过 SSH 查看 CPU、内存、磁盘、网络与温度，支持密码或私钥登录 | [server-monitor.yaml](https://raw.githubusercontent.com/ddkpp9/egern-scripts/main/modules/server-monitor.yaml) |
 | 网络出口状态 | 显示直连/代理公网 IPv4、IPv6、地理位置和 Wi-Fi/蜂窝内网 IPv4 | [network-ip-widget.yaml](https://raw.githubusercontent.com/ddkpp9/egern-scripts/main/modules/network-ip-widget.yaml) |
 | 湖北联通 | 显示剩余话费、流量和语音，接口失败时使用缓存 | [hubei-unicom.yaml](https://raw.githubusercontent.com/ddkpp9/egern-scripts/main/modules/hubei-unicom.yaml) |
+| 今日黄历 | 真实宜忌、冲煞、农历、节气和彭祖百忌，每日跨日刷新 | [almanac-widget.yaml](https://raw.githubusercontent.com/ddkpp9/egern-scripts/main/modules/almanac-widget.yaml) |
 
 点击 Raw 链接后在 Egern 中导入模块。
 
@@ -31,6 +32,7 @@
 - 中国大陆 IPv4 的省市归属优先使用 IPIP.NET 免费接口，结果缓存 24 小时；IPv6 和境外 IP 使用原有接口。
 - 网络出口状态仅显示内网 IPv4；代理出口没有 IPv6 时自动隐藏 IPv6 行。
 - 服务器监控的私钥必须包含完整的 `BEGIN/END` 内容；支持真实换行或 `\\n`。
+- 今日黄历使用 TimelessQ 万年历接口，接口故障时优先显示当日缓存，不会再生成随机宜忌或幸运指数。
 
 ## 致谢
 
