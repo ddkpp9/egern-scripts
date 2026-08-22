@@ -48,6 +48,7 @@ for (const family of ['systemSmall', 'systemMedium', 'systemLarge', 'systemExtra
   assert.equal(widget.type, 'widget', family);
   assert.match(widget.refreshAfter, /^\d{4}-\d{2}-\d{2}T/);
 }
+assert.equal(calls.length, 1, 'all renders on the same day must share one API response');
 
 ctx.widgetFamily = 'systemLarge';
 const widget = await module.default(ctx);
@@ -60,8 +61,13 @@ assert.doesNotMatch(text, /★|幸运指数/);
 assert.ok(calls.every(call => call.options.policy === 'DIRECT'));
 assert.ok(calls.every(call => /datetime=\d{4}-\d{2}-\d{2}/.test(call.url)));
 
+ctx.http.get = async () => { throw new Error('should not run for today cache'); };
+await module.default(ctx);
+assert.equal(calls.length, 1, 'manual refresh on the same day must not request the API');
+
+storage.clear();
 ctx.http.get = async () => { throw new Error('offline'); };
-const cached = await module.default(ctx);
-assert.match(allText(cached).join('\n'), /接口暂时不可用|黄历接口不可用/);
+const offline = await module.default(ctx);
+assert.match(allText(offline).join('\n'), /黄历接口不可用/);
 
 console.log('almanac-widget tests: ok');
