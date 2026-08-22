@@ -1,0 +1,37 @@
+name: "今日黄历"
+description: "真实黄历宜忌、冲煞、农历、节气与彭祖百忌；每天北京时间零点后刷新，接口异常时使用当日缓存或离线农历"
+author: "IBL3ND（原始组件）/ ddkpp9（重构）"
+homepage: "https://github.com/ddkpp9/egern-scripts"
+
+env_schema:
+  SHOW_LUNAR:
+    name: 显示农历
+    description: "是否显示干支、生肖和农历日期"
+    default_value: "true"
+    options:
+      - "true"
+      - "false"
+  SHOW_YIJI:
+    name: 显示宜忌
+    description: "是否显示真实黄历宜忌"
+    default_value: "true"
+    options:
+      - "true"
+      - "false"
+  SHOW_DETAILS:
+    name: 显示详细信息
+    description: "大尺寸组件是否显示星宿、神位和彭祖百忌"
+    default_value: "true"
+    options:
+      - "true"
+      - "false"
+
+scriptings:
+- generic:
+    name: 今日黄历
+    script_url: https://raw.githubusercontent.com/ddkpp9/egern-scripts/main/modules/almanac-widget.js
+    timeout: 12
+
+widgets:
+- name: 今日黄历
+  script_name: 今日黄历
