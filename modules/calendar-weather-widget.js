@@ -8,6 +8,9 @@ const WEEK = ['日', '一', '二', '三', '四', '五', '六'];
 
 const C = {
   bg: { light: '#f6f8fa', dark: '#0d1117' },
+  clear: { light: '#00000000', dark: '#00000000' },
+  glass: { light: '#ffffff38', dark: '#0d111766' },
+  glassBorder: { light: '#ffffff8f', dark: '#ffffff42' },
   card: { light: '#ffffff', dark: '#161b22' },
   border: { light: '#d0d7de', dark: '#30363d' },
   text: { light: '#1f2328', dark: '#f0f6fc' },
@@ -310,8 +313,24 @@ function uvText(value) {
   if (value < 11) return '很强'; return '极强';
 }
 
+function beaufort(value) {
+  const speed = Number(value);
+  if (!Number.isFinite(speed)) return '--';
+  const limits = [1, 6, 12, 20, 29, 39, 50, 62, 75, 89, 103, 118];
+  const level = limits.findIndex(limit => speed < limit);
+  return level < 0 ? 12 : level;
+}
+
 function root(model, children, padding = 12, gap = 6) {
-  return { type: 'widget', backgroundColor: C.bg, padding, gap, refreshAfter: model.refreshAfter, children };
+  return {
+    type: 'widget', backgroundColor: C.clear, padding: 1, gap: 0,
+    refreshAfter: model.refreshAfter,
+    children: [{
+      type: 'stack', direction: 'column', flex: 1,
+      backgroundColor: C.glass, borderColor: C.glassBorder,
+      borderWidth: 1, borderRadius: 'auto', padding, gap, children,
+    }],
+  };
 }
 
 function txt(value, size = 'caption1', color = C.text, weight, options = {}) {
@@ -333,7 +352,7 @@ function col(children, gap = 4) { return { type: 'stack', direction: 'column', g
 function dateHeader(model, compact = false) {
   const d = model.calendar;
   return col([
-    txt(`${d.year}/${d.month}/${d.day}/${d.weekText}/${d.lunar}`, compact ? 'caption1' : 'subheadline', C.text, 'semibold', { minScale: 0.55 }),
+    txt(`${d.year}/${d.month}/${d.day}/${d.weekText}/${d.lunar}`, compact ? 'caption1' : 'subheadline', C.accent, 'semibold', { minScale: 0.55 }),
     row([icon('location.fill', C.accent, compact ? 11 : 13), txt(model.locationLabel, compact ? 'caption2' : 'caption1', C.muted, 'medium')], 4),
   ], 2);
 }
@@ -341,18 +360,24 @@ function dateHeader(model, compact = false) {
 function currentBlock(model, compact = false) {
   return col([
     row([icon(model.weather.symbol, C.warn, compact ? 22 : 28), txt(`${model.temperature}°C`, compact ? 21 : 28, C.text, 'medium')], 7),
-    txt(`${model.windDirection} ${model.windSpeed} km/h`, 'caption2', C.muted, 'medium', { textAlign: 'right' }),
-    txt(`湿度 ${model.humidity}% · 体感 ${model.apparent}°`, 'caption2', C.muted, 'medium', { textAlign: 'right' }),
-    txt(`紫外线 ${uvText(model.uv)} · 空气 ${aqiText(model.aqi)}`, 'caption2', C.muted, 'medium', { textAlign: 'right' }),
+    detailLine('风力', `${model.windDirection} ${beaufort(model.windSpeed)}级`),
+    detailLine('湿度', `${model.humidity}%`),
+    detailLine('体感', `${model.apparent}°`),
+    detailLine('紫外线', uvText(model.uv)),
+    detailLine('空气', aqiText(model.aqi)),
   ], 2);
 }
 
+function detailLine(label, value) {
+  return row([txt(label, 'caption2', C.muted, 'medium'), txt(value, 'caption2', C.text, 'medium')], 4, 'center');
+}
+
 function forecastBlock(model) {
-  return row(model.days.slice(1, 3).map((day, index) => col([
-    txt(index === 0 ? '明天' : '后天', 'caption2', C.muted, 'semibold', { textAlign: 'center' }),
-    icon(weatherInfo(day.code).symbol, C.accent, 19),
+  return row(model.days.slice(1, 3).map(day => col([
+    txt(`${Number(clean(day.date).slice(-2)) || '--'}日`, 'caption1', C.text, 'semibold', { textAlign: 'center' }),
+    icon(weatherInfo(day.code).symbol, C.text, 20),
     txt(`${day.low}/${day.high}°`, 'caption2', C.text, 'medium', { textAlign: 'center' }),
-  ], 2)), 18, 'center');
+  ], 1)), 20, 'center');
 }
 
 function eventRows(model, limit = 3) {
@@ -365,7 +390,8 @@ function eventRows(model, limit = 3) {
 function sunBlock(model) {
   const today = model.days[0] || {};
   return col([
-    txt(`↑${today.high == null ? '--' : today.high}°  ↓${today.low == null ? '--' : today.low}°`, 'caption1', C.text, 'semibold', { textAlign: 'right' }),
+    row([txt(`↑${today.high == null ? '--' : today.high}°`, 'caption1', C.danger, 'semibold'),
+      txt(`↓${today.low == null ? '--' : today.low}°`, 'caption1', C.success, 'semibold')], 7),
     row([icon('sunrise.fill', C.warn, 14), txt(today.sunrise || '--', 'caption2', C.muted), icon('sunset.fill', C.danger, 14), txt(today.sunset || '--', 'caption2', C.muted)], 4),
     txt(`更新 ${model.updatedAt}`, 'caption2', C.dim, 'medium', { textAlign: 'right' }),
   ], 2);
@@ -402,14 +428,26 @@ function renderSmall(model) {
 }
 
 function renderMedium(model) {
-  return root(model, [
-    row([dateHeader(model), { type: 'spacer' }, currentBlock(model)], 7, 'start'),
-    divider(),
-    row([col([forecastBlock(model), txt(model.summary, 'caption2', C.text, 'medium', { maxLines: 2, minScale: 0.55 })], 4),
-      { type: 'spacer' }, sunBlock(model)], 8, 'end'),
-    row([col(eventRows(model, 3), 2), { type: 'spacer' },
-      ...(model.warning ? [txt('数据为缓存', 'caption2', C.warn, 'semibold')] : [])], 4, 'end'),
-  ], 12, 5);
+  const left = {
+    ...col([
+      dateHeader(model),
+      forecastBlock(model),
+      row([icon('speaker.wave.2.fill', C.muted, 11), txt(model.summary, 'caption2', C.text, 'medium', { maxLines: 1, minScale: 0.5 })], 4),
+      divider(),
+      ...eventRows(model, 3),
+    ], 3),
+    flex: 5, alignItems: 'start',
+  };
+  const right = {
+    ...col([
+      currentBlock(model),
+      { type: 'spacer' },
+      sunBlock(model),
+      ...(model.warning ? [txt('显示缓存数据', 'caption2', C.warn, 'semibold', { textAlign: 'right' })] : []),
+    ], 3),
+    flex: 3, alignItems: 'end',
+  };
+  return root(model, [row([left, { type: 'spacer', length: 10 }, right], 0, 'start')], 11, 0);
 }
 
 function renderLarge(model) {
