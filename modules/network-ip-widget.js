@@ -41,8 +41,9 @@ const COUNTRY_NAMES = {
   NL: '荷兰', RU: '俄罗斯', SG: '新加坡', TW: '中国台湾', US: '美国',
 };
 
-const GEO_CACHE_KEY = 'network-ip-widget:geo-cache-v1';
-const GEO_CACHE_TTL = 7 * 24 * 60 * 60 * 1000;
+// v2 invalidates locations cached before mainland IPv4 switched to IPIP.NET.
+const GEO_CACHE_KEY = 'network-ip-widget:geo-cache-v2';
+const GEO_CACHE_TTL = 24 * 60 * 60 * 1000;
 const PREFETCH_CACHE_KEY = 'network-ip-widget:network-prefetch-v1';
 const PREFETCH_LOCK_KEY = 'network-ip-widget:network-prefetch-lock-v1';
 const LAST_WIDGET_NETWORK_KEY = 'network-ip-widget:last-widget-network-v1';
@@ -297,6 +298,7 @@ async function fetchGeo(ctx, ip) {
     },
   ];
 
+  let baseGeo = null;
   for (const provider of providers) {
     try {
       const response = await ctx.http.get(provider.url, {
@@ -307,13 +309,51 @@ async function fetchGeo(ctx, ip) {
       });
       if (response.status < 200 || response.status >= 300) continue;
       const data = provider.parse(await response.json());
-      if (data) return data;
+      if (data) {
+        baseGeo = data;
+        break;
+      }
     } catch (_) {
       // Try the next provider, then fall back to Egern's local IP database.
     }
   }
 
-  return fallbackGeo(ctx, ip);
+  const localGeo = baseGeo || fallbackGeo(ctx, ip);
+  if (isIPv4(address) && localGeo && localGeo.countryCode === 'CN') {
+    const ipipGeo = await fetchIpipGeo(ctx, address, localGeo);
+    if (ipipGeo) return ipipGeo;
+  }
+
+  return localGeo;
+}
+
+async function fetchIpipGeo(ctx, ip, fallback) {
+  try {
+    // IPIP.NET's official free endpoint currently supports IPv4 only.
+    const response = await ctx.http.get(`http://freeapi.ipip.net/${ip}`, {
+      policy: 'DIRECT',
+      timeout: 4500,
+      credentials: 'omit',
+      headers: REQUEST_HEADERS,
+    });
+    if (response.status < 200 || response.status >= 300) return null;
+
+    const data = await response.json();
+    if (!Array.isArray(data) || !/^(中国|中国大陆|China)$/i.test(clean(data[0]))) {
+      return null;
+    }
+
+    return normalizeGeo({
+      countryCode: 'CN',
+      country: '中国',
+      region: data[1],
+      city: data[2],
+      asn: fallback && fallback.asn,
+      isp: data[4] || data[3] || (fallback && fallback.isp),
+    });
+  } catch (_) {
+    return null;
+  }
 }
 
 function fallbackGeo(ctx, ip) {
