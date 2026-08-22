@@ -10,7 +10,7 @@ function makeContext({ family = 'systemMedium', proxy6 = false, proxyPolicy = '�
 
   const geo = {
     '223.5.5.5': {
-      country_code: 'CN', country: '中国', region: '浙江省', city: '杭州市',
+      country_code: 'CN', country: '中国', region: '错误省份', city: '错误城市',
       connection: { asn: 45102, isp: '中国电信' },
     },
     '2400:3200::1': {
@@ -47,6 +47,10 @@ function makeContext({ family = 'systemMedium', proxy6 = false, proxyPolicy = '�
     http: {
       async get(url, options = {}) {
         calls.push({ url, options });
+
+        if (url.startsWith('http://freeapi.ipip.net/')) {
+          return responseJSON(['中国', '浙江省', '杭州市', '', '中国电信']);
+        }
 
         if (url.startsWith('https://ipwho.is/')) {
           const encoded = url.slice('https://ipwho.is/'.length).split('?')[0];
@@ -111,6 +115,13 @@ function allText(node, output = []) {
   const proxyProbe = calls.find(call => call.url.includes('api-ipv4.ip.sb') && call.options.policy === '策略选择');
   assert.ok(directProbe, 'DIRECT probe must force the DIRECT policy');
   assert.ok(proxyProbe, 'proxy probe must force the configured policy group');
+  const ipipProbe = calls.find(call => call.url === 'http://freeapi.ipip.net/223.5.5.5');
+  assert.ok(ipipProbe, 'mainland IPv4 should use IPIP.NET');
+  assert.equal(ipipProbe.options.policy, 'DIRECT');
+  assert.ok(
+    !calls.some(call => call.url.includes('freeapi.ipip.net/2400:3200::1')),
+    'the free IPIP.NET endpoint must not be used for IPv6',
+  );
 }
 
 {
