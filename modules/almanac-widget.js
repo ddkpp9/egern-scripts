@@ -25,25 +25,27 @@ export default async function (ctx) {
   const showDetails = boolEnv(env.SHOW_DETAILS, true);
   const today = chinaDateParts();
   const dateKey = formatDateKey(today);
+  const cached = readJSON(ctx, CACHE_KEY);
   let model;
 
-  try {
-    const response = await ctx.http.get(`${API_URL}?datetime=${dateKey}`, {
-      policy: 'DIRECT',
-      timeout: 8000,
-      credentials: 'omit',
-      headers: { Accept: 'application/json', 'Cache-Control': 'no-cache' },
-    });
-    if (response.status < 200 || response.status >= 300) {
-      throw new Error(`黄历接口 HTTP ${response.status}`);
-    }
-    model = normalizeResponse(await response.json(), today);
-    writeJSON(ctx, CACHE_KEY, { dateKey, at: Date.now(), model });
-  } catch (error) {
-    const cached = readJSON(ctx, CACHE_KEY);
-    if (cached && cached.dateKey === dateKey && cached.model) {
-      model = { ...cached.model, warning: '接口暂时不可用，显示今日缓存' };
-    } else {
+  // Almanac data changes once per Beijing calendar day. Reuse today's cache
+  // for every widget size/manual render and request the API only after rollover.
+  if (cached && cached.dateKey === dateKey && cached.model) {
+    model = cached.model;
+  } else {
+    try {
+      const response = await ctx.http.get(`${API_URL}?datetime=${dateKey}`, {
+        policy: 'DIRECT',
+        timeout: 8000,
+        credentials: 'omit',
+        headers: { Accept: 'application/json', 'Cache-Control': 'no-cache' },
+      });
+      if (response.status < 200 || response.status >= 300) {
+        throw new Error(`黄历接口 HTTP ${response.status}`);
+      }
+      model = normalizeResponse(await response.json(), today);
+      writeJSON(ctx, CACHE_KEY, { dateKey, at: Date.now(), model });
+    } catch (error) {
       model = offlineModel(today, error);
     }
   }
@@ -142,8 +144,7 @@ function chinaDateParts(now = Date.now()) {
 
 function nextChinaMidnight(now = Date.now()) {
   const date = chinaDateParts(now);
-  // Five minutes after midnight avoids an API response generated for yesterday.
-  return new Date(Date.UTC(date.year, date.month - 1, date.day + 1, 0, 5) - 8 * 60 * 60 * 1000);
+  return new Date(Date.UTC(date.year, date.month - 1, date.day + 1, 0, 0) - 8 * 60 * 60 * 1000);
 }
 
 function formatDateKey(date) {
